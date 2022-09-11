@@ -26,7 +26,7 @@ P.restore_position = function()
     local lines = vim.api.nvim_buf_line_count(0)
 
     if pos and lines and pos[1] > lines then
-        pos[1] = lines - 1
+        pos[1] = lines
     end
 
     if pos then
