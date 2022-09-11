@@ -36,7 +36,6 @@ local hijack_netrw = function()
 end
 
 M.setup = function()
-    print("RIGHT VERSION")
     hijack_netrw()
 end
 
