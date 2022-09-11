@@ -6,6 +6,7 @@ local M = {}
 
 local P = {
     show_hidden = true,
+    show_info = true,
     positions = {},
     list = {}
 }
@@ -33,6 +34,22 @@ P.restore_position = function()
     end
 end
 
+P.entry_string = function(entry)
+    local str = "  "
+
+    if P.show_info then
+        str = str .. entry.info .. " "
+    end
+
+    str = str .. entry.icon.str .. " " .. entry.name
+
+    if entry.link then
+        str = str .. " -> " .. entry.link
+    end
+
+    return str
+end
+
 P.refresh = function()
     if not P.buf then return end
 
@@ -43,25 +60,28 @@ P.refresh = function()
     P.list = ls.ls(P.cwd, P.show_hidden)
 
     local list = {}
+    local info_length = 0
     for _, entry in pairs(P.list) do
-        local str = "  " .. entry.info .. " " .. entry.icon.str .. " " .. entry.name
+        local str = P.entry_string(entry)
 
-        if entry.link then
-            str = str .. " -> " .. entry.link
+        if P.show_info then
+            info_length = #entry.info
         end
+
         table.insert(list, str)
     end
 
     vim.api.nvim_buf_set_lines(P.buf, 0, -1, true, list)
 
     local i = 0
+
     for _, entry in pairs(P.list) do
-        vim.api.nvim_buf_add_highlight(P.buf, -1, "Comment", i, 2, #entry.info + 2)
+        vim.api.nvim_buf_add_highlight(P.buf, -1, "Comment", i, 2, info_length + 2)
         if entry.is_dir then
-            vim.api.nvim_buf_add_highlight(P.buf, -1, "Function", i, #entry.info + 6, -1)
+            vim.api.nvim_buf_add_highlight(P.buf, -1, "Function", i, info_length + 6, -1)
         end
 
-        vim.api.nvim_buf_add_highlight(P.buf, -1, entry.icon.hl, i, #entry.info + 3, #entry.info + 6)
+        vim.api.nvim_buf_add_highlight(P.buf, -1, entry.icon.hl, i, info_length + 3, info_length + 6)
 
         i = i + 1
     end
@@ -119,6 +139,12 @@ end
 
 M.toggle_hidden = function()
     P.show_hidden = not P.show_hidden
+    P.refresh()
+end
+
+M.toggle_info = function()
+    print("TOGGLING INFO")
+    P.show_info = not P.show_info
     P.refresh()
 end
 

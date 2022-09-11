@@ -10,7 +10,8 @@ local default_mappings = {
         ["d"] = actions_ui.create_dir,
         ["x"] = actions_ui.remove,
         ["r"] = actions_ui.rename,
-        ["."] = actions_ui.toggle_hidden
+        ["."] = actions_ui.toggle_hidden,
+        ["i"] = actions_ui.toggle_info
     }
 }
 
