@@ -1,3 +1,3 @@
-local highlights = require("nlist.highlights")
+--local highlights = require("nlist.highlights")
 
-highlights.setup()
+--highlights.setup()
