@@ -1,3 +1,3 @@
-local highlights = require("ngit.highlights")
+local highlights = require("nlist.highlights")
 
 highlights.setup()

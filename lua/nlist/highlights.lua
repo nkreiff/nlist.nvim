@@ -1,5 +1,3 @@
-local utils = require("nlist.utils")
-
 local M = {}
 
 local P = {
