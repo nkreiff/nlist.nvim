@@ -92,20 +92,14 @@ M.close_window = function()
 end
 
 M.get_marked_files = function()
+    local marks = {}
     local p = Path:new(marks_path)
+
     if p:exists() then
-        --[[
-        local marks = {}
-        local marks_str = p:read()
-
-        for s in marks_str:gmatch("[^\r\n]+") do
-            table.insert(marks, s)
-        end
-
-        return marks
-        ]]
-        return p:readlines()
+        marks = p:readlines()
     end
+
+    return marks
 end
 
 M.toggle_file = function(file)
