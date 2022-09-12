@@ -1,5 +1,6 @@
 local ls = require("nlist.ls")
 local utils = require("nlist.utils")
+local marks = require("nlist.mark")
 local Path = require("plenary.path")
 
 local M = {}
@@ -143,7 +144,6 @@ M.toggle_hidden = function()
 end
 
 M.toggle_info = function()
-    print("TOGGLING INFO")
     P.show_info = not P.show_info
     P.refresh()
 end
@@ -194,6 +194,29 @@ M.remove = function()
                 P.refresh()
             end
         end)
+end
+
+M.mark_file = function()
+    local entry = P.get_selected_entry()
+    marks.toggle_file(entry.path)
+end
+
+M.paste_marked_files = function()
+    P.save_position()
+
+    local marked_files = marks.get_marked_files()
+    for _, marked_file in ipairs(marked_files) do
+        local filename = string.match(marked_file, string.format(".*%s([^%s]*)$", Path.path.sep, Path.path.sep))
+
+        Path:new(marked_file):copy({
+            recursive = true,
+            interactive = true,
+            destination = P.cwd:joinpath(filename),
+        })
+    end
+
+    marks.clear()
+    P.refresh()
 end
 
 return M

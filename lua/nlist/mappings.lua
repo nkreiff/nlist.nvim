@@ -1,3 +1,4 @@
+local actions_mark = require("nlist.mark")
 local actions_ui = require("nlist.ui")
 
 local M = {}
@@ -11,7 +12,10 @@ local default_mappings = {
         ["x"] = actions_ui.remove,
         ["r"] = actions_ui.rename,
         ["."] = actions_ui.toggle_hidden,
-        ["i"] = actions_ui.toggle_info
+        ["i"] = actions_ui.toggle_info,
+        ["m"] = actions_ui.mark_file,
+        ["t"] = actions_mark.toggle_window,
+        ["p"] = actions_ui.paste_marked_files,
     }
 }
 

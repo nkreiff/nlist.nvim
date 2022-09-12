@@ -10,7 +10,6 @@ P.cmd = function(cmd)
     local stdoutFile = os.tmpname()
     local stderrFile = os.tmpname()
 
-    vim.api.nvim_out_write(cmd .. "\n")
     local exit = os.execute(cmd .. " > " .. stdoutFile .. " 2> " .. stderrFile)
 
     local stdout_file = io.open(stdoutFile)

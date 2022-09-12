@@ -1,3 +1,5 @@
+local popup = require("plenary.popup")
+
 local M = {}
 
 local get_devicons = function()
