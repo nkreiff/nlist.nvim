@@ -12,6 +12,10 @@ local P = {
     list = {}
 }
 
+P.filename = function(file)
+    return string.match(file, string.format(".*%s([^%s]*)$", Path.path.sep, Path.path.sep))
+end
+
 P.get_selected_entry = function()
     local line, _ = unpack(vim.api.nvim_win_get_cursor(0))
     return P.list[line]
@@ -224,13 +228,18 @@ M.paste_marked_files = function()
 
     local marked_files = marks.get_marked_files()
     for _, marked_file in ipairs(marked_files) do
-        local filename = string.match(marked_file, string.format(".*%s([^%s]*)$", Path.path.sep, Path.path.sep))
+        local marked_path = Path:new(marked_file)
 
-        Path:new(marked_file):copy({
-            recursive = true,
-            interactive = true,
-            destination = P.cwd:joinpath(filename),
-        })
+        if marked_path:exists() then
+            local filename = P.filename(marked_file)
+            local destination = P.cwd:joinpath(filename)
+
+            marked_path:copy({
+                recursive = true,
+                interactive = true,
+                destination = destination,
+            })
+        end
     end
 
     marks.clear()
@@ -246,21 +255,10 @@ M.move_marked_files = function()
             local marked_path = Path:new(marked_file)
 
             if marked_path:exists() then
-                local filename = string.match(marked_file, string.format(".*%s([^%s]*)$", Path.path.sep, Path.path.sep))
+                local filename = P.filename(marked_file)
                 local destination = P.cwd:joinpath(filename)
 
                 ls.mv(marked_path:absolute(), destination:absolute())
-                --[[
-                local status = marked_path:copy({
-                    recursive = true,
-                    interactive = true,
-                    destination = destination,
-                })
-
-                if status[destination] then
-                    marked_path:rm({ recursive = true })
-                end
-                ]]
             end
         end
     end
