@@ -11,6 +11,39 @@ local get_devicons = function()
     return devicons
 end
 
+M.merge_tables = function(t1, t2)
+    local merged_table = {}
+
+    t1 = t1 or {}
+    t2 = t2 or {}
+
+    for k, v2 in pairs(t2) do
+        local v1 = t1[k]
+
+        if type(v2) == "table" then
+            if type(v1) == "table" then
+                merged_table[k] = M.merge_tables(v1, v2)
+            else
+                merged_table[k] = v2
+            end
+        elseif v2 ~= nil then
+            merged_table[k] = v2
+        else
+            merged_table[k] = v1
+        end
+    end
+
+    for k, v1 in pairs(t1) do
+        local v2 = t2[k]
+
+        if v2 == nil then
+            merged_table[k] = v1
+        end
+    end
+
+    return merged_table
+end
+
 M.get_or_create_buffer = function(filename)
     local buf_id = nil
     local buf_exists = vim.fn.bufexists(filename) ~= 0

@@ -1,4 +1,14 @@
+local mappings = require("nlist.mappings")
+local utils = require("nlist.utils")
+local ui = require("nlist.ui")
+
 local M = {}
+
+local default_config = {
+    hijack_netrw_enabled = true,
+    show_information = true,
+    show_hidden_files = true,
+}
 
 local hijack_netrw = function()
     vim.g.loaded_netrw = 1
@@ -35,8 +45,18 @@ local hijack_netrw = function()
     })
 end
 
-M.setup = function()
-    hijack_netrw()
+M.setup = function(config)
+    config = utils.merge_tables(default_config, config)
+
+    if config.hijack_netrw_enabled then
+        hijack_netrw()
+    end
+
+    mappings.set_custom_mappings(config.custom_mappings)
+    mappings.install_global_mappings()
+
+    ui.set_show_information(config.show_information)
+    ui.set_show_hidden_files(config.show_hidden_files)
 end
 
 return M

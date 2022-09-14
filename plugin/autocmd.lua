@@ -7,6 +7,6 @@ vim.api.nvim_create_autocmd("BufEnter", {
     pattern = "nList",
     callback = function()
         local buf = vim.api.nvim_get_current_buf()
-        mappings.set_list_mappings(buf)
+        mappings.install_mappings(buf)
     end
 })

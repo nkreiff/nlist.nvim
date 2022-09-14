@@ -115,4 +115,10 @@ M.ls = function(dir, showHidden)
     return P.sort(P.map(P.filter(stdout), showHidden, dir))
 end
 
+M.mv = function(path1, path2)
+    local exit, _, _ = P.cmd("mv " .. path1 .. " " .. path2)
+
+    return exit
+end
+
 return M

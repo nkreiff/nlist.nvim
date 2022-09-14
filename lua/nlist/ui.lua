@@ -38,6 +38,10 @@ end
 P.entry_string = function(entry)
     local str = "  "
 
+    if marks.is_marked(entry.path) then
+        str = "* "
+    end
+
     if P.show_info then
         str = str .. entry.info .. " "
     end
@@ -95,6 +99,16 @@ P.refresh = function()
     vim.api.nvim_buf_set_option(P.buf, "modifiable", false)
 end
 
+M.set_show_information = function(b)
+    P.show_info = b
+    P.refresh()
+end
+
+M.set_show_hidden_files = function(b)
+    P.show_hidden = b
+    P.refresh()
+end
+
 M.open = function(cwd)
     local current_path = cwd or vim.api.nvim_buf_get_name(0)
 
@@ -148,6 +162,15 @@ M.toggle_info = function()
     P.refresh()
 end
 
+M.toggle_mark = function()
+    P.save_position()
+
+    local entry = P.get_selected_entry()
+    marks.toggle_path(entry.path)
+
+    P.refresh()
+end
+
 M.create_file = function()
     vim.ui.input({ prompt = "Create file: " }, function(input)
         if input and #input > 0 then
@@ -196,11 +219,6 @@ M.remove = function()
         end)
 end
 
-M.mark_file = function()
-    local entry = P.get_selected_entry()
-    marks.toggle_file(entry.path)
-end
-
 M.paste_marked_files = function()
     P.save_position()
 
@@ -213,6 +231,38 @@ M.paste_marked_files = function()
             interactive = true,
             destination = P.cwd:joinpath(filename),
         })
+    end
+
+    marks.clear()
+    P.refresh()
+end
+
+M.move_marked_files = function()
+    P.save_position()
+
+    local marked_files = marks.get_marked_files()
+    for _, marked_file in ipairs(marked_files) do
+        if #marked_file > 0 then
+            local marked_path = Path:new(marked_file)
+
+            if marked_path:exists() then
+                local filename = string.match(marked_file, string.format(".*%s([^%s]*)$", Path.path.sep, Path.path.sep))
+                local destination = P.cwd:joinpath(filename)
+
+                ls.mv(marked_path:absolute(), destination:absolute())
+                --[[
+                local status = marked_path:copy({
+                    recursive = true,
+                    interactive = true,
+                    destination = destination,
+                })
+
+                if status[destination] then
+                    marked_path:rm({ recursive = true })
+                end
+                ]]
+            end
+        end
     end
 
     marks.clear()

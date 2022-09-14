@@ -102,12 +102,24 @@ M.get_marked_files = function()
     return marks
 end
 
-M.toggle_file = function(file)
+M.is_marked = function(path)
+    local marks = M.get_marked_files()
+
+    for _, mark in ipairs(marks) do
+        if mark == path then
+            return true
+        end
+    end
+
+    return false
+end
+
+M.toggle_path = function(path)
     local marks = M.get_marked_files()
 
     local removeIndex = -1
     for i, mark in ipairs(marks) do
-        if mark == file then
+        if mark == path then
             removeIndex = i
             break
         end
@@ -116,7 +128,7 @@ M.toggle_file = function(file)
     if removeIndex > 0 then
         table.remove(marks, removeIndex)
     else
-        table.insert(marks, file)
+        table.insert(marks, path)
     end
 
     Path:new(marks_path):write(table.concat(marks, "\n"), "w")
