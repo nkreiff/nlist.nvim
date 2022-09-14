@@ -1,6 +1,7 @@
-local ls = require("nlist.ls")
+local cmd = require("nlist.cmd")
 local utils = require("nlist.utils")
 local marks = require("nlist.mark")
+local highlights = require("nlist.highlights")
 local Path = require("plenary.path")
 
 local M = {}
@@ -66,7 +67,7 @@ P.refresh = function()
     vim.api.nvim_buf_set_option(P.buf, "modifiable", true)
     vim.api.nvim_buf_set_lines(P.buf, 0, -1, true, {})
 
-    P.list = ls.ls(P.cwd, P.show_hidden)
+    P.list = cmd.ls(P.cwd, P.show_hidden)
 
     local list = {}
     local info_length = 0
@@ -85,12 +86,12 @@ P.refresh = function()
     local i = 0
 
     for _, entry in pairs(P.list) do
-        vim.api.nvim_buf_add_highlight(P.buf, -1, "Comment", i, 2, info_length + 2)
+        highlights.add(P.buf, "Comment", i, 2, info_length + 2)
         if entry.is_dir then
-            vim.api.nvim_buf_add_highlight(P.buf, -1, "Function", i, info_length + 6, -1)
+            highlights.add(P.buf, "Function", i, info_length + 6, -1)
         end
 
-        vim.api.nvim_buf_add_highlight(P.buf, -1, entry.icon.hl, i, info_length + 3, info_length + 6)
+        highlights.add(P.buf, entry.icon.hl, i, info_length + 3, info_length + 6)
 
         i = i + 1
     end
@@ -258,7 +259,7 @@ M.move_marked_files = function()
                 local filename = P.filename(marked_file)
                 local destination = P.cwd:joinpath(filename)
 
-                ls.mv(marked_path:absolute(), destination:absolute())
+                cmd.mv(marked_path:absolute(), destination:absolute())
             end
         end
     end
