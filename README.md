@@ -39,7 +39,7 @@ This plugin automatically configures itself with a set of default key bindings. 
 
 | Binding Name       | Key Mapping | Description                                                        |
 |--------------------|-------------|--------------------------------------------------------------------|
-| open_ui            | <leader>l   | Open UI                                                            |
+| open_ui            | \<leader>l  | Open UI                                                            |
 | follow             | l           | Visit current file or directory                                    |
 | parent             | h           | Move to parent directory                                           |
 | create_file        | f           | Create a new file                                                  |
