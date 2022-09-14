@@ -1,28 +1,24 @@
 local utils = require("nlist.utils")
 local Path = require("plenary.path")
+local Job = require("plenary.job")
 
 local M = {}
 
 local P = {}
 
--- TODO replace with plenary jobs
-P.cmd = function(cmd)
-    local stdoutFile = os.tmpname()
-    local stderrFile = os.tmpname()
+P.cmd = function(command, args)
+    print(vim.inspect(command), vim.inspect(args))
 
-    local exit = os.execute(cmd .. " > " .. stdoutFile .. " 2> " .. stderrFile)
+    local stderr = {}
+    local stdout, exit = Job:new({
+        command = command,
+        args = args,
+        on_stderr = function(_, data)
+            table.insert(stderr, data)
+        end,
+    }):sync()
 
-    local stdout_file = io.open(stdoutFile)
-    if not stdout_file then return exit, {}, {} end
-    local stdout = stdout_file:read("*all")
-    stdout_file:close()
-
-    local stderr_file = io.open(stderrFile)
-    if not stderr_file then return exit, stdout, {} end
-    local stderr = stderr_file:read("*all")
-    stderr_file:close()
-
-    return exit, utils.string_to_array(stdout), utils.string_to_array(stderr)
+    return exit, stdout, stderr
 end
 
 P.filter = function(list)
@@ -106,7 +102,7 @@ end
 M.ls = function(dir, showHidden)
     local params = "-lhaL"
 
-    local exit, stdout, stderr = P.cmd("ls " .. params .. " " .. dir:absolute())
+    local exit, stdout, stderr = P.cmd("ls", { params, dir:absolute() })
 
     if exit ~= 0 then
         return stderr
@@ -116,7 +112,7 @@ M.ls = function(dir, showHidden)
 end
 
 M.mv = function(path1, path2)
-    local exit, _, _ = P.cmd("mv " .. path1 .. " " .. path2)
+    local exit, _, _ = P.cmd("mv", { path1, path2 })
 
     return exit
 end
