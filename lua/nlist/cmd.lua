@@ -7,8 +7,6 @@ local M = {}
 local P = {}
 
 P.cmd = function(command, args)
-    print(vim.inspect(command), vim.inspect(args))
-
     local stderr = {}
     local stdout, exit = Job:new({
         command = command,
