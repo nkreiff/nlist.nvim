@@ -15,12 +15,15 @@ P.create_window = function()
     local width = 80
     local height = 16
     local borderchars = { "─", "│", "─", "│", "╭", "╮", "╯", "╰" }
+    --local borderchars = { "═", "║", "═", "║", "╔", "╗", "╝", "╚" }
 
     local buf = vim.api.nvim_create_buf(false, false)
 
     local nlist_win_id, win = popup.create(buf, {
         title = "Marked Files",
-        highlight = "nListWindow",
+        --highlight = "NormalFloat",
+        --titlehighlight = "FloatBorder",
+        --borderhighlight = "FloatBorder",
         line = math.floor(((vim.o.lines - height) / 2) - 1),
         col = math.floor((vim.o.columns - width) / 2),
         minwidth = width,

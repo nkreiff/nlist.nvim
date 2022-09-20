@@ -6,11 +6,12 @@ local M = {}
 
 local P = {}
 
-P.cmd = function(command, args)
+M.cmd = function(command, args, cwd)
     local stderr = {}
     local stdout, exit = Job:new({
         command = command,
         args = args,
+        cwd = cwd,
         on_stderr = function(_, data)
             table.insert(stderr, data)
         end,
@@ -100,7 +101,7 @@ end
 M.ls = function(dir, showHidden)
     local params = "-lhaL"
 
-    local exit, stdout, stderr = P.cmd("ls", { params, dir:absolute() })
+    local exit, stdout, stderr = M.cmd("ls", { params, dir:absolute() })
 
     if exit ~= 0 then
         return stderr
@@ -110,7 +111,7 @@ M.ls = function(dir, showHidden)
 end
 
 M.mv = function(path1, path2)
-    local exit, _, _ = P.cmd("mv", { path1, path2 })
+    local exit, _, _ = M.cmd("mv", { path1, path2 })
 
     return exit
 end

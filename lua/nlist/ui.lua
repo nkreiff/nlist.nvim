@@ -9,6 +9,7 @@ local M = {}
 local P = {
     show_hidden = true,
     show_info = true,
+    mark_char = ">",
     positions = {},
     list = {}
 }
@@ -44,7 +45,7 @@ P.entry_string = function(entry)
     local str = "  "
 
     if marks.is_marked(entry.path) then
-        str = "* "
+        str = P.mark_char .. " "
     end
 
     if P.show_info then
@@ -86,9 +87,9 @@ P.refresh = function()
     local i = 0
 
     for _, entry in pairs(P.list) do
-        highlights.add(P.buf, "Comment", i, 2, info_length + 2)
+        highlights.add(P.buf, highlights.EntryInfo, i, 2, info_length + 2)
         if entry.is_dir then
-            highlights.add(P.buf, "Function", i, info_length + 6, -1)
+            highlights.add(P.buf, highlights.Directory, i, info_length + 6, -1)
         end
 
         highlights.add(P.buf, entry.icon.hl, i, info_length + 3, info_length + 6)
@@ -112,6 +113,14 @@ end
 M.set_show_hidden_files = function(b)
     P.show_hidden = b
     P.refresh()
+end
+
+M.set_mark_character = function(c)
+    if c and #c == 1 then
+        P.mark_char = c
+    else
+        P.mark_char = "*"
+    end
 end
 
 M.open = function(cwd)
@@ -266,6 +275,28 @@ M.move_marked_files = function()
 
     marks.clear()
     P.refresh()
+end
+
+M.custom_cmd = function(custom_cmd)
+    return function()
+        local entry = P.get_selected_entry()
+
+        local final_args = {}
+        for _, arg in ipairs(custom_cmd.args) do
+            local final_arg = arg:gsub("%%entry", entry.name)
+            print(arg, entry.path, "'", final_arg, "'")
+            table.insert(final_args, final_arg)
+        end
+
+        local exit, _, stderr = cmd.cmd(custom_cmd.command, final_args, P.cwd:absolute())
+
+        if exit ~= 0 then
+            error(stderr)
+        end
+
+        P.save_position()
+        P.refresh()
+    end
 end
 
 return M

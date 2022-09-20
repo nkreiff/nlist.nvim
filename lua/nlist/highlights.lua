@@ -1,4 +1,6 @@
 local M = {
+    EntryInfo = "nListEntryInfo",
+    Directory = "nListDirectory",
     MarkedEntry = "nListMarkedEntry"
 }
 
@@ -12,8 +14,17 @@ M.setup = function()
     P.ns = vim.api.nvim_create_namespace(P.nsName)
     vim.api.nvim_set_hl_ns(P.ns)
 
-    vim.api.nvim_set_hl(P.ns, M.MarkedEntry, { bg = "#FF0000", ctermbg = "red" })
-    table.insert(P.match_ids, vim.fn.matchadd(M.MarkedEntry, "^%*%s.*"))
+    local styles = {
+        { name = M.EntryInfo, value = { default = true, link = "Comment" } },
+        { name = M.Directory, value = { default = true, link = "Function" } },
+        { name = M.MarkedEntry, value = { default = true, link = "String" } }
+    }
+
+    for _, style in pairs(styles) do
+        vim.api.nvim_set_hl(P.ns, style.name, style.value)
+    end
+
+    table.insert(P.match_ids, vim.fn.matchadd(M.MarkedEntry, "^[^\\s]\\s"))
 end
 
 M.add = function(buf, group, line, col_start, col_end)

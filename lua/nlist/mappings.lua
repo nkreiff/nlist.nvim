@@ -21,9 +21,14 @@ local default_mappings = {
 }
 
 local custom_mappings = default_mappings
+local custom_commands = {}
 
 M.set_custom_mappings = function(mappings)
     custom_mappings = utils.merge_tables(custom_mappings, mappings)
+end
+
+M.set_custom_commands = function(commands)
+    custom_commands = commands
 end
 
 M.install_global_mappings = function()
@@ -43,6 +48,10 @@ M.install_mappings = function(buf)
     vim.keymap.set("n", custom_mappings.toggle_mark_win, actions_mark.toggle_window, { buffer = buf })
     vim.keymap.set("n", custom_mappings.paste_marked_files, actions_ui.paste_marked_files, { buffer = buf })
     vim.keymap.set("n", custom_mappings.move_marked_files, actions_ui.move_marked_files, { buffer = buf })
+
+    for _, custom_cmd in ipairs(custom_commands) do
+        vim.keymap.set("n", custom_cmd.binding, actions_ui.custom_cmd(custom_cmd), { buffer = buf })
+    end
 end
 
 return M

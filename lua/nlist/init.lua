@@ -8,6 +8,9 @@ local default_config = {
     hijack_netrw_enabled = true,
     show_information = true,
     show_hidden_files = true,
+    custom_mappings = {},
+    custom_commands = {},
+    mark_character = "*",
 }
 
 local hijack_netrw = function()
@@ -53,10 +56,12 @@ M.setup = function(config)
     end
 
     mappings.set_custom_mappings(config.custom_mappings)
+    mappings.set_custom_commands(config.custom_commands)
     mappings.install_global_mappings()
 
     ui.set_show_information(config.show_information)
     ui.set_show_hidden_files(config.show_hidden_files)
+    ui.set_mark_character(config.mark_character)
 end
 
 return M
