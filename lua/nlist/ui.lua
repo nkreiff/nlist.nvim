@@ -284,7 +284,6 @@ M.custom_cmd = function(custom_cmd)
         local final_args = {}
         for _, arg in ipairs(custom_cmd.args) do
             local final_arg = arg:gsub("%%entry", entry.name)
-            print(arg, entry.path, "'", final_arg, "'")
             table.insert(final_args, final_arg)
         end
 
