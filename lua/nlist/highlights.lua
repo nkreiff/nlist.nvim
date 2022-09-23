@@ -12,7 +12,9 @@ local P = {
 
 M.setup = function()
     P.ns = vim.api.nvim_create_namespace(P.nsName)
-    vim.api.nvim_set_hl_ns(P.ns)
+    if vim.api.nvim_set_hl_ns then
+        vim.api.nvim_set_hl_ns(P.ns)
+    end
 
     local styles = {
         { name = M.EntryInfo, value = { default = true, link = "Comment" } },
