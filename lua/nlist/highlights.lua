@@ -11,11 +11,8 @@ local P = {
 }
 
 M.setup = function()
-    print("iniciando setup")
     P.ns = vim.api.nvim_create_namespace(P.nsName)
-    print("namespace creado", P.ns)
     vim.api.nvim_set_hl_ns(P.ns)
-    print("namespace activo")
 
     local styles = {
         { name = M.EntryInfo, value = { default = true, link = "Comment" } },
