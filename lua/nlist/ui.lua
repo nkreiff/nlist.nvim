@@ -23,9 +23,10 @@ P.get_selected_entry = function()
     return P.list[line]
 end
 
-P.save_position = function()
+P.save_position = function(delta)
+    delta = delta or 0
     local pos = vim.api.nvim_win_get_cursor(0)
-    P.positions[P.cwd:absolute()] = { pos[1], 0 }
+    P.positions[P.cwd:absolute()] = { pos[1] + delta, 0 }
 end
 
 P.restore_position = function()
@@ -177,7 +178,7 @@ M.toggle_info = function()
 end
 
 M.toggle_mark = function()
-    P.save_position()
+    P.save_position(1)
 
     local entry = P.get_selected_entry()
     marks.toggle_path(entry.path)
